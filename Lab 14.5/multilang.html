@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Language Website</title>
+
+<style>
+body {
+    font-family: Arial;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+/* RTL SUPPORT */
+body.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+/* NAV */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+select {
+    padding: 5px;
+}
+
+/* CONTENT */
+.card {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+    <h2 id="title"></h2>
+
+    <select onchange="changeLang(this.value)">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="ar">Arabic</option>
+    </select>
+</div>
+
+<div class="card">
+    <p id="welcome"></p>
+    <button id="btn"></button>
+</div>
+
+<script>
+// 🌍 TRANSLATION FILE (AI structured)
+const translations = {
+    en: {
+        title: "My Website",
+        welcome: "Welcome to our platform",
+        button: "Click Me"
+    },
+    hi: {
+        title: "मेरी वेबसाइट",
+        welcome: "हमारे प्लेटफॉर्म में आपका स्वागत है",
+        button: "क्लिक करें"
+    },
+    ar: {
+        title: "موقعي",
+        welcome: "مرحبًا بك في منصتنا",
+        button: "اضغط هنا",
+        rtl: true
+    }
+};
+
+// LOAD LANGUAGE
+let lang = localStorage.getItem("lang") || "en";
+
+// APPLY LANGUAGE
+function applyLang() {
+    const t = translations[lang];
+
+    document.getElementById("title").innerText = t.title;
+    document.getElementById("welcome").innerText = t.welcome;
+    document.getElementById("btn").innerText = t.button;
+
+    // RTL HANDLING
+    if (t.rtl) {
+        document.body.classList.add("rtl");
+    } else {
+        document.body.classList.remove("rtl");
+    }
+
+    // ACCESSIBILITY
+    document.documentElement.lang = lang;
+}
+
+// CHANGE LANGUAGE
+function changeLang(l) {
+    lang = l;
+    localStorage.setItem("lang", l);
+    applyLang();
+}
+
+// INIT
+applyLang();
+
+</script>
+
+</body>
+</html>
