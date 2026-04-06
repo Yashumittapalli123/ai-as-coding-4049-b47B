@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart</title>
+
+<style>
+body {
+    font-family: Arial;
+    padding: 20px;
+    background: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.product, .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.cart {
+    margin-top: 20px;
+}
+
+.total {
+    font-size: 20px;
+    text-align: right;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Shopping Cart</h1>
+
+<div class="container">
+
+    <!-- PRODUCTS -->
+    <div id="products"></div>
+
+    <!-- CART -->
+    <div class="cart">
+        <h2>Cart</h2>
+        <div id="cart"></div>
+        <div class="total">Total: ₹<span id="total">0</span></div>
+    </div>
+
+</div>
+
+<script>
+// PRODUCTS DATA
+const products = [
+    { id: 1, name: "Laptop", price: 50000 },
+    { id: 2, name: "Phone", price: 20000 },
+    { id: 3, name: "Headphones", price: 2000 }
+];
+
+// CART STATE (AI concept: JS object)
+let cart = JSON.parse(localStorage.getItem("cart")) || {};
+
+// DISPLAY PRODUCTS
+function renderProducts() {
+    const productDiv = document.getElementById("products");
+    productDiv.innerHTML = "";
+
+    products.forEach(p => {
+        productDiv.innerHTML += `
+            <div class="product">
+                <span>${p.name} - ₹${p.price}</span>
+                <button onclick="addToCart(${p.id})">Add</button>
+            </div>
+        `;
+    });
+}
+
+// ADD TO CART
+function addToCart(id) {
+    if (!cart[id]) {
+        cart[id] = { ...products.find(p => p.id === id), qty: 1 };
+    } else {
+        cart[id].qty++;
+    }
+    updateCart();
+}
+
+// REMOVE ITEM
+function removeFromCart(id) {
+    delete cart[id];
+    updateCart();
+}
+
+// UPDATE QUANTITY
+function changeQty(id, delta) {
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateCart();
+}
+
+// UPDATE CART UI + TOTAL
+function updateCart() {
+    const cartDiv = document.getElementById("cart");
+    cartDiv.innerHTML = "";
+
+    let total = 0;
+
+    Object.values(cart).forEach(item => {
+        total += item.price * item.qty;
+
+        cartDiv.innerHTML += `
+            <div class="cart-item">
+                <span>${item.name} (₹${item.price})</span>
+                <div>
+                    <button onclick="changeQty(${item.id}, -1)">-</button>
+                    ${item.qty}
+                    <button onclick="changeQty(${item.id}, 1)">+</button>
+                    <button onclick="removeFromCart(${item.id})">Remove</button>
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById("total").innerText = total;
+
+    // SAVE TO LOCALSTORAGE (AI requirement)
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// INIT
+renderProducts();
+updateCart();
+
+</script>
+
+</body>
+</html>
