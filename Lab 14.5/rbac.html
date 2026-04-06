@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RBAC App</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+}
+
+/* ROLE COLORS */
+.admin { border-left: 5px solid red; }
+.editor { border-left: 5px solid orange; }
+.user { border-left: 5px solid green; }
+</style>
+</head>
+
+<body>
+
+<h1>Role-Based Access Control</h1>
+
+<div class="container">
+
+    <h3>Select Role</h3>
+    <button onclick="setRole('admin')">Admin</button>
+    <button onclick="setRole('editor')">Editor</button>
+    <button onclick="setRole('user')">User</button>
+
+    <div id="dashboard"></div>
+
+</div>
+
+<script>
+// STATE (AI: centralized role state)
+let state = {
+    role: localStorage.getItem("role") || "user"
+};
+
+// PERMISSIONS MAP (AI-designed logic)
+const permissions = {
+    admin: ["view", "edit", "delete"],
+    editor: ["view", "edit"],
+    user: ["view"]
+};
+
+// SET ROLE
+function setRole(role){
+    state.role = role;
+    localStorage.setItem("role", role);
+    renderUI();
+}
+
+// CHECK ACCESS
+function hasPermission(action){
+    return permissions[state.role].includes(action);
+}
+
+// RENDER UI (CONDITIONAL)
+function renderUI(){
+    const dash = document.getElementById("dashboard");
+
+    let html = `<div class="card ${state.role}">
+        <h2>${state.role.toUpperCase()} PANEL</h2>
+    `;
+
+    // VIEW
+    if(hasPermission("view")){
+        html += `<p>📄 You can view content</p>`;
+    }
+
+    // EDIT
+    if(hasPermission("edit")){
+        html += `<button>Edit Content</button>`;
+    }
+
+    // DELETE
+    if(hasPermission("delete")){
+        html += `<button style="background:red;color:white;">Delete Content</button>`;
+    }
+
+    html += `</div>`;
+
+    dash.innerHTML = html;
+}
+
+// INIT
+renderUI();
+
+</script>
+
+</body>
+</html>
